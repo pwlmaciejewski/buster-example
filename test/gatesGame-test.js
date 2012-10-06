@@ -1,4 +1,4 @@
-buster.testCase('Game test case', {
+var testCase = buster.testCase('Game test case', {
   setUp: function () {
     this.gatesGame = Object.create(GatesGame).initialize(3);
   },
@@ -20,10 +20,68 @@ buster.testCase('Game test case', {
   },
 
   'test reset': function () {
-    var obj = {};
-    GatesGame.reset.call(obj);
-    assert.equals(obj._playerGate, -1);
-    assert.equals(obj._awardGate, -1);
-    assert.equals(obj._rejectedGates, []);
+    var game = Object.create(GatesGame);
+    game.reset();
+    assert.equals(game.getPlayerGate(), -1);
+    assert.equals(game.getAwardGate(), -1);
+    assert.equals(game.getRejectedGates(), []);
+  },
+
+  'test reject gate': function () {
+    this.gatesGame.rejectGate(1);
+    this.gatesGame.rejectGate(2);
+    this.gatesGame.rejectGate(1);
+    assert.equals(this.gatesGame.getRejectedGates(), [1, 2]);
+  },
+
+  'test reject many gates': {
+    'test argument validation': function () {
+      assert.exception(function () {
+        this.gatesGame.rejectManyGates(1);
+      });      
+    },
+
+    'test rejection': function () {
+      this.gatesGame.rejectManyGates([1, 2, 1]);
+      assert.equals(this.gatesGame.getRejectedGates(), [1, 2]);      
+    }
+  },
+
+  'test getRandomGate': {
+    setUp: function () {
+      var that = this;
+
+      this.getRandomGateManyTimes = function (num) {
+        var res = [];
+        for (var i = 0; i < num; i += 1) {
+          res.push(that.gatesGame.getRandomGate());
+        }
+        return res;
+      };
+    },
+
+    'test lower bound': function () {
+      var gates = this.getRandomGateManyTimes(100);
+      assert.equals(gates.filter(function (gate) {
+        return gate < 0;        
+      }).length, 0);
+    },
+
+    'test upper bound': function () {
+      var gates = this.getRandomGateManyTimes(100);
+      var that = this.gatesGame;
+      assert.equals(gates.filter(function (gate) {
+        return gate >= that.getNumberOfGates();        
+      }).length, 0);
+    },
+
+    'test rejection': function () {
+      this.gatesGame.rejectGate(0);
+      var gates = this.getRandomGateManyTimes(100);
+      var that = this.gatesGame;
+      assert.equals(gates.filter(function (gate) {
+        return gate === 0;        
+      }).length, 0);
+    }
   }
 });
