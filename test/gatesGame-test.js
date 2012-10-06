@@ -9,7 +9,7 @@ var testCase = buster.testCase('Game test case', {
         var args = Array.prototype.slice.call(arguments);
         var num = args.shift();
         for (var i = 0; i < num; i += 1) {
-          res.push(that.game[method].apply(that.game, args));
+          res.push(this[method].apply(this, args));
         }
         return res;
       };
@@ -18,7 +18,7 @@ var testCase = buster.testCase('Game test case', {
 
   'test reset': function () {
     this.bareGame.reset();
-    assert.equals(this.bareGame.getPlayerGate(), -1);
+    assert.equals(this.bareGame.getPlayersGate(), -1);
     assert.equals(this.bareGame.getAwardGate(), -1);
     assert.equals(this.bareGame.getRejectedGates(), []);
   },
@@ -46,34 +46,35 @@ var testCase = buster.testCase('Game test case', {
     }
   },
 
-  'test reject gate': function () {
-    this.game.rejectGate(1);
-    this.game.rejectGate(2);
-    this.game.rejectGate(1);
-    assert.equals(this.game.getRejectedGates(), [1, 2]);
-  },
-
-  'test reject many gates': {
-    'test argument validation': function () {
+  'test reject gates': {
+    'argument validation': function () {
+      var that = this;
       assert.exception(function () {
-        this.game.rejectManyGates(1);
+        that.game.rejectGates(1);
       });      
     },
 
-    'test rejection': function () {
-      this.game.rejectManyGates([1, 2, 1]);
+    'reject one gate': function () {
+      this.game.rejectGates([1]);
+      this.game.rejectGates([2]);
+      this.game.rejectGates([1]);
       assert.equals(this.game.getRejectedGates(), [1, 2]);      
+    },
+
+    'reject many gates': function () {
+      this.game.rejectGates([1, 2, 1]);
+      assert.equals(this.game.getRejectedGates(), [1, 2]);            
     }
   },
 
   'test is gate rejected': {
     'rejected': function () {
-      this.game.rejectGate(1);
+      this.game.rejectGates([1]);
       assert(this.game.isGateRejected(1));
     },
 
     'not rejected': function () {
-      this.game.rejectGate(1);
+      this.game.rejectGates([1]);
       refute(this.game.isGateRejected(0));
     }
   },
@@ -84,14 +85,14 @@ var testCase = buster.testCase('Game test case', {
     },
 
     'test lower bound': function () {
-      var gates = this.getRandomGateNTimes(100);
+      var gates = this.getRandomGateNTimes.call(this.game, 100);
       assert.equals(gates.filter(function (gate) {
         return gate < 0;        
       }).length, 0);
     },
 
     'test upper bound': function () {
-      var gates = this.getRandomGateNTimes(100);
+      var gates = this.getRandomGateNTimes.call(this.game, 100);
       var that = this.game;
       assert.equals(gates.filter(function (gate) {
         return gate >= that.getGatesCount();        
@@ -99,8 +100,8 @@ var testCase = buster.testCase('Game test case', {
     },
 
     'test rejection': function () {
-      this.game.rejectGate(0);
-      var gates = this.getRandomGateNTimes(100);
+      this.game.rejectGates([0]);
+      var gates = this.getRandomGateNTimes.call(this.game, 100);
       var that = this.game;
       assert.equals(gates.filter(function (gate) {
         return gate === 0;        
@@ -108,25 +109,81 @@ var testCase = buster.testCase('Game test case', {
     }
   },
 
-  'get random gate except': {
-    setUp: function () {
-      this.getRandomGateExceptNTimes = this.nTimes('getRandomGateExcept');
-    },
-
-    'test': function  () {      
-      assert.equals(this.getRandomGateExceptNTimes(100, [1, 2]).filter(function(gate) {
-        return gate === 1 || gate === 2;
-      }).length, 0);
-    }
+  'get random gate except': function  () {      
+    var getRandomGateExceptNTimes = this.nTimes('getRandomGateExcept');
+    assert.equals(getRandomGateExceptNTimes.call(this.game, 100, [1, 2]).filter(function(gate) {
+      return gate === 1 || gate === 2;
+    }).length, 0);
   },
 
-  '// decision': {
+  'test player changes gate': {
+    setUp: function () {
+      this.makeDecisionNTimes = this.nTimes('playerChangesGate');
+    },
+
     'change gate': function () {
       this.bareGame.initialize({
         decisionStrategy: 'change gate'
       });
-      this.bareGame.setPlayerGate(1);
-      refute.equals(this.bareGame.makeDecision(), 1);
+      this.bareGame.setPlayersGate(2);
+      assert.equals(this.makeDecisionNTimes.call(this.bareGame, 100).filter(function (gate) {
+        return gate === 2;
+      }).length, 0);
+    },
+
+    'dont change gate': function () {
+      this.bareGame.initialize({
+        decisionStrategy: 'dont change gate'
+      });
+      this.bareGame.setPlayersGate(2);
+      assert.equals(this.makeDecisionNTimes.call(this.bareGame, 100).filter(function(gate) {
+        return gate !== 2;
+      }).length, 100);
+    }
+  },
+
+  'get gates except': function () {
+    assert.equals(this.game.getGatesExcept([1]), [0, 2]);
+  },
+
+  'test host rejects all but two': {
+    setUp: function () {
+      var that = this;
+      this.hostRejectsAllButTwoNTimes = this.nTimes('hostRejectsAllButTwo');      
+      this.sameGatesSetup = function () {
+        that.game.setPlayersGate(1);
+        that.game.setAwardGate(1);
+      };
+      this.differentGatesSetup = function () {
+        that.game.setPlayersGate(0);
+        that.game.setAwardGate(1);    
+      };
+    },
+
+    'result array length': {
+      'same gates': function () {
+        this.sameGatesSetup();
+        assert.equals(this.game.hostRejectsAllButTwo().length, 1);
+      },
+
+      'different gates': function () {
+        this.differentGatesSetup();
+        assert.equals(this.game.hostRejectsAllButTwo().length, 1);
+      }
+    },
+
+    'different gates': function () {
+      this.differentGatesSetup();
+      assert.equals(this.hostRejectsAllButTwoNTimes.call(this.game, 100).filter(function(gates) {
+        return gates.indexOf(0) !== -1 || gates.indexOf(1) !== -1;
+      }).length, 0);      
+    },
+
+    'same gates': function () {
+      this.sameGatesSetup();
+      assert.equals(this.hostRejectsAllButTwoNTimes.call(this.game, 100).filter(function(gate) {
+        return gate.indexOf(1) !== -1;
+      }).length, 0);
     }
   }
 });
