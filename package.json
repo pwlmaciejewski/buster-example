@@ -21,7 +21,9 @@
   "author": "fragphace",
   "license": "BSD",
   "dependencies": {
-    "optimist": "~0.3.4",
-    "grunt-coffee": "0.0.6"
+    "optimist": "~0.3.4"
+  },
+  "devDependencies": {
+    "grunt-buster": "~0.1.2"
   }
 }

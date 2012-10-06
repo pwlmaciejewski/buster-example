@@ -1,23 +1,19 @@
 module.exports = function(grunt) {
   grunt.initConfig({
-    watch: {
-      coffee: {
-        files: '<config:coffee.all.src>',
-        tasks: 'coffee'
-      }
+    lint: {
+      files: ['grunt.js', 'test/**/*.js', 'bin/**/*.js', 'lib/**/*.js']
     },
-
-    coffee: {
-      all: {
-        src: ['bin/**/*.coffee', 'test/**/*.coffee', 'lib/**/*.coffee'],
-        dest: '<%= grunt.task.current.target %>',
-        options: {
-          bare: true
-        }
+    buster: {
+      test: {
+        config: 'test/buster.js'
+      },
+      server: {
+        port: 1111
       }
     }
   });
 
-  grunt.loadNpmTasks('grunt-coffee');
+  grunt.loadNpmTasks('grunt-buster');
 
+  grunt.registerTask('test', 'lint buster');
 };

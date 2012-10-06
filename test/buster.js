@@ -1,8 +1,8 @@
 var config = module.exports;
 
 config["Server-side config"] = {
-    env: "node",
+    env: "browser",
     rootPath: "../",
-    sources: [],
-    tests: []
+    sources: ['lib/gatesGame.js'],
+    tests: ['test/*-test.js']
 };
