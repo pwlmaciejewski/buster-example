@@ -1,22 +1,6 @@
 var testCase = buster.testCase('Game test case', {
   setUp: function () {
-    this.gatesGame = Object.create(GatesGame).initialize(3);
-  },
-
-  'test initialization numberOfGates argument': function () {
-    assert.exception(function () {
-      Object.create(GatesGame).initialize();
-    });
-
-    refute.exception(function () {
-      Object.create(GatesGame).initialize(3);
-    });
-
-    assert.equals(Object.create(GatesGame).initialize(5)._numberOfGates, 5);
-  },
-
-  'test initialization type': function () {
-    assert.equals(typeof Object.create(GatesGame).initialize(3), 'object');
+    this.game = Object.create(GatesGame).initialize();
   },
 
   'test reset': function () {
@@ -27,35 +11,59 @@ var testCase = buster.testCase('Game test case', {
     assert.equals(game.getRejectedGates(), []);
   },
 
+  'test setOptions': {
+    setUp: function () {
+      this.game = Object.create(GatesGame);
+      this.game._setOptions({
+        gatesCount: 5,
+        decisionStrategy: 'dont change gate'
+      });
+    },
+
+    'gated count': function () {
+      assert.equals(this.game.getGatesCount(), 5);      
+    },
+
+    'decision strategy': function () {
+      assert.equals(this.game.getDecisionStrategy(), 'dont change gate');
+    }
+  },
+
+  'test initialization': {
+    'returned type': function () {
+      assert.equals(typeof Object.create(GatesGame).initialize(), 'object');
+    }
+  },
+
   'test reject gate': function () {
-    this.gatesGame.rejectGate(1);
-    this.gatesGame.rejectGate(2);
-    this.gatesGame.rejectGate(1);
-    assert.equals(this.gatesGame.getRejectedGates(), [1, 2]);
+    this.game.rejectGate(1);
+    this.game.rejectGate(2);
+    this.game.rejectGate(1);
+    assert.equals(this.game.getRejectedGates(), [1, 2]);
   },
 
   'test reject many gates': {
     'test argument validation': function () {
       assert.exception(function () {
-        this.gatesGame.rejectManyGates(1);
+        this.game.rejectManyGates(1);
       });      
     },
 
     'test rejection': function () {
-      this.gatesGame.rejectManyGates([1, 2, 1]);
-      assert.equals(this.gatesGame.getRejectedGates(), [1, 2]);      
+      this.game.rejectManyGates([1, 2, 1]);
+      assert.equals(this.game.getRejectedGates(), [1, 2]);      
     }
   },
 
   'test is gate rejected': {
     'rejected': function () {
-      this.gatesGame.rejectGate(1);
-      assert(this.gatesGame.isGateRejected(1));
+      this.game.rejectGate(1);
+      assert(this.game.isGateRejected(1));
     },
 
     'not rejected': function () {
-      this.gatesGame.rejectGate(1);
-      refute(this.gatesGame.isGateRejected(0));
+      this.game.rejectGate(1);
+      refute(this.game.isGateRejected(0));
     }
   },
 
@@ -66,7 +74,7 @@ var testCase = buster.testCase('Game test case', {
       this.getRandomGateManyTimes = function (num) {
         var res = [];
         for (var i = 0; i < num; i += 1) {
-          res.push(that.gatesGame.getRandomGate());
+          res.push(that.game.getRandomGate());
         }
         return res;
       };
@@ -81,19 +89,25 @@ var testCase = buster.testCase('Game test case', {
 
     'test upper bound': function () {
       var gates = this.getRandomGateManyTimes(100);
-      var that = this.gatesGame;
+      var that = this.game;
       assert.equals(gates.filter(function (gate) {
-        return gate >= that.getNumberOfGates();        
+        return gate >= that.getGatesCount();        
       }).length, 0);
     },
 
     'test rejection': function () {
-      this.gatesGame.rejectGate(0);
+      this.game.rejectGate(0);
       var gates = this.getRandomGateManyTimes(100);
-      var that = this.gatesGame;
+      var that = this.game;
       assert.equals(gates.filter(function (gate) {
         return gate === 0;        
       }).length, 0);
+    }
+  },
+
+  decision: {
+    '// change': function () {
+      var game = Object.create(GatesGame).initialize();
     }
   }
 });
