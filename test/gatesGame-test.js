@@ -47,6 +47,18 @@ var testCase = buster.testCase('Game test case', {
     }
   },
 
+  'test is gate rejected': {
+    'rejected': function () {
+      this.gatesGame.rejectGate(1);
+      assert(this.gatesGame.isGateRejected(1));
+    },
+
+    'not rejected': function () {
+      this.gatesGame.rejectGate(1);
+      refute(this.gatesGame.isGateRejected(0));
+    }
+  },
+
   'test getRandomGate': {
     setUp: function () {
       var that = this;
@@ -75,7 +87,7 @@ var testCase = buster.testCase('Game test case', {
       }).length, 0);
     },
 
-    'test rejection': function () {
+    '// test rejection': function () {
       this.gatesGame.rejectGate(0);
       var gates = this.getRandomGateManyTimes(100);
       var that = this.gatesGame;
