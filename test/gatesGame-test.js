@@ -87,7 +87,7 @@ var testCase = buster.testCase('Game test case', {
       }).length, 0);
     },
 
-    '// test rejection': function () {
+    'test rejection': function () {
       this.gatesGame.rejectGate(0);
       var gates = this.getRandomGateManyTimes(100);
       var that = this.gatesGame;
