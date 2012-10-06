@@ -185,5 +185,31 @@ var testCase = buster.testCase('Game test case', {
         return gate.indexOf(1) !== -1;
       }).length, 0);
     }
+  },
+
+  'test results': {
+    setUp: function () {
+      this.playNTimes = this.nTimes('play');
+    },
+
+    'change gate': function () {
+      this.bareGame.initialize({
+        decisionStrategy: 'change gate'
+      });
+      var results = this.playNTimes.call(this.bareGame, 1000);
+      assert(results.filter(function (result) {
+        return result === true;
+      }).length > 600);
+    },
+
+    'do not change gate': function () {
+      this.bareGame.initialize({
+        decisionStrategy: 'dont change gate'
+      });
+      var results = this.playNTimes.call(this.bareGame, 1000);
+      assert(results.filter(function (result) {
+        return result === true;
+      }).length < 4000);
+    }
   }
 });
