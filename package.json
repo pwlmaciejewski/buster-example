@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "name": "buster-example",
+  "version": "0.0.0",
+  "description": "3 gates game simulation tested in buster.js",
+  "main": "bin/simulate.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fragphace/buster-example.git"
+  },
+  "keywords": [
+    "buster.js",
+    "example"
+  ],
+  "author": "fragphace",
+  "license": "BSD",
+  "dependencies": {
+    "optimist": "~0.3.4",
+    "grunt-coffee": "0.0.6"
+  }
+}
