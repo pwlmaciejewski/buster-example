@@ -1,3 +1,8 @@
+if (typeof module == "object" && typeof require == "function") {  
+  var buster = require('buster');
+  var GatesGame = require('../lib/gatesGame');
+}
+
 var testCase = buster.testCase('Game test case', {
   setUp: function () {
     var that = this;
