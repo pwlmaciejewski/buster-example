@@ -116,9 +116,9 @@ var testCase = buster.testCase('Game test case', {
     }).length, 0);
   },
 
-  'test player changes gate': {
+  'test player makes decision': {
     setUp: function () {
-      this.makeDecisionNTimes = this.nTimes('playerChangesGate');
+      this.makeDecisionNTimes = this.nTimes('playerMakesDecision');
     },
 
     'change gate': function () {
@@ -138,7 +138,7 @@ var testCase = buster.testCase('Game test case', {
       this.bareGame.setPlayersGate(2);
       assert.equals(this.makeDecisionNTimes.call(this.bareGame, 100).filter(function(gate) {
         return gate !== 2;
-      }).length, 100);
+      }).length, 0);
     }
   },
 
@@ -206,10 +206,10 @@ var testCase = buster.testCase('Game test case', {
       this.bareGame.initialize({
         decisionStrategy: 'dont change gate'
       });
-      var results = this.playNTimes.call(this.bareGame, 1000);
+      var results = this.playNTimes.call(this.bareGame, 10);
       assert(results.filter(function (result) {
         return result === true;
-      }).length < 4000);
+      }).length < 400);
     }
   }
 });
