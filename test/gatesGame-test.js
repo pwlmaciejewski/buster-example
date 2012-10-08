@@ -1,6 +1,12 @@
-if (typeof module == "object" && typeof require == "function") {  
+if (typeof module == "object") {  
   var buster = require('buster');
   var GatesGame = require('../lib/gatesGame');
+} else if (typeof require === 'function') {
+  // require(['gatesGame'], function (GatesGame) {
+  //   // window.GatesGame = GatesGame;
+  //   // buster.run();
+  // });
+  // buster.run();
 }
 
 var testCase = buster.testCase('Game test case', {
