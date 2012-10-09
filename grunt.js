@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     lint: {
-      files: ['grunt.js', 'test/*-test.js', 'lib/**/*.js']
+      files: ['grunt.js', 'test/*-test.js', 'lib/gatesGame.js']
     },
     buster: {
       test: {

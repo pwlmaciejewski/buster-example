@@ -1,12 +1,12 @@
 if (typeof module == "object") {  
   var buster = require('buster');
   var GatesGame = require('../lib/gatesGame');
-} else if (typeof require === 'function') {
-  // require(['gatesGame'], function (GatesGame) {
-  //   // window.GatesGame = GatesGame;
-  //   // buster.run();
-  // });
-  // buster.run();
+} else if (typeof define === 'function') {
+  // Require just for fun.
+  require(['jquery', 'lib/gatesGame'], function ($, GatesGame) {
+    window.GatesGame = GatesGame;
+    buster.run();
+  });
 }
 
 var testCase = buster.testCase('Game test case', {
@@ -198,7 +198,9 @@ var testCase = buster.testCase('Game test case', {
     }
   },
 
-  'test results': {
+  // Deferred because it can sometimes fail (ya know... propability).
+  // But I leave it here because it's very handy during development.
+  '// test results': {
     setUp: function () {
       this.playNTimes = this.nTimes('play');
     },

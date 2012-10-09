@@ -1,3 +1,11 @@
 require.config({
-  baseUrl: '../lib'
+	paths: {
+    jquery: 'lib/jquery-1.4.2'
+  },
+
+  shim: {
+    'jquery': {
+      exports: 'jQuery'
+    }
+  }
 });

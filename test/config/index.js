@@ -4,5 +4,5 @@ module.exports = {
   },
   "Browser tests": require('./browser'),
   "Server-side tests": require('./node'),
-  // "AMD tests": require('./amd')
+  "AMD tests": require('./amd')
 }
