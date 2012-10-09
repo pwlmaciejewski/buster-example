@@ -22,6 +22,7 @@
   "license": "BSD",
   "dependencies": {
     "optimist": "~0.3.4",
-    "grunt-buster": "~0.1.2"
+    "grunt-buster": "~0.1.2",
+    "buster": "~0.6.2"
   }
 }
