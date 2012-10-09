@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "node_modules/buster/bin/buster test --node"
   },
   "repository": {
     "type": "git",
