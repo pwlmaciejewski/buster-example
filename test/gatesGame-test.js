@@ -1,16 +1,36 @@
-if (typeof module == "object") {  
+var GaterGame;
+if (typeof module === 'object' && typeof require === 'function') {
   var buster = require('buster');
-  var GatesGame = require('../lib/gatesGame');
+
+  var requirejs = require('requirejs');
+  var config = require(process.env.PWD + '/amd/app.js');
+  config['baseUrl'] = __dirname + '/../';
+  config['nodeRequire'] = require;
+  requirejs.config(config);
+
+  var jsdom = require('jsdom').jsdom,
+      document = jsdom(),
+      window = document.createWindow();
+  //global.document = document;//this crashes buster result reporting in node
+  global.window = window;
+
+  requirejs(['jquery', 'lib/gatesGame'], function ($, game) {
+    GatesGame = game;
+  });
 } else if (typeof define === 'function') {
   // Require just for fun.
-  require(['jquery', 'lib/gatesGame'], function ($, GatesGame) {
-    window.GatesGame = GatesGame;
+  require(['jquery', 'gatesGame'], function ($, game) {
+    GatesGame = game;
     buster.run();
   });
 }
 
+//requireMethod(['jquery', 'gatesGame'], function ($, GatesGame) {
 var testCase = buster.testCase('Game test case', {
   setUp: function () {
+    if (typeof module === 'object' && typeof require === 'function') {
+      global.document = document;//when you place it here buster reporter shows results
+    }
     var that = this;
     this.bareGame = Object.create(GatesGame);
     this.game = Object.create(GatesGame).initialize();
@@ -226,3 +246,7 @@ var testCase = buster.testCase('Game test case', {
     }
   }
 });
+/*if (typeof module !== 'object' || typeof require !== 'function') {
+  buster.run();
+}*/
+//});
