@@ -23,6 +23,8 @@
   "dependencies": {
     "optimist": "~0.3.4",
     "grunt-buster": "~0.1.2",
-    "buster": "~0.6.2"
+    "buster": "~0.6.2",
+    "requirejs": "~2.1.0",
+    "jsdom": "~0.2.15"
   }
 }
